@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.zhenzikj</groupId>
+	<artifactId>zhenzisms</artifactId>
+	<version>2.0.2</version>
+	<packaging>jar</packaging>
+
+	<name>zhenzisms_sdk</name>
+	<description>send sms tool</description>
+	<url>http://smsow.zhenzikj.com</url>
+    <developers>
+        <developer>
+            <name>zhenzikj</name>
+            <email>seesource@163.com</email>
+        </developer>
+    </developers>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>sonatype-nexus-releases</id>
+			<!-- 这里的url就是Issue中回复的staging 的repo地址 -->
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+		</repository>
+	</distributionManagement>
+	<scm>
+		<tag>master</tag>
+		<url>git@github.com:cloudnil/marathon-client.git</url>
+		<connection>scm:git:git@github.com:cloudnil/marathon-client.git</connection>
+		<developerConnection>scm:git:git@github.com:cloudnil/marathon-client.git</developerConnection>
+	</scm>
+	<parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+	<build>
+		<finalName>zhenzi_market_admin</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.1</version>
+				<configuration>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

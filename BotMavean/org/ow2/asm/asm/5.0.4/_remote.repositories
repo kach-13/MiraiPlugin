@@ -1,0 +1,6 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed Mar 15 16:02:55 CST 2023
+asm-5.0.4.jar>central=
+asm-5.0.4.jar>mirrorId=
+asm-5.0.4.pom>central=
+asm-5.0.4.pom>mirrorId=

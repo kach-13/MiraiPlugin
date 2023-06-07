@@ -1,0 +1,6 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed Mar 15 16:03:41 CST 2023
+aopalliance-1.0.jar>central=
+aopalliance-1.0.jar>mirrorId=
+aopalliance-1.0.pom>mirrorId=
+aopalliance-1.0.pom>central=

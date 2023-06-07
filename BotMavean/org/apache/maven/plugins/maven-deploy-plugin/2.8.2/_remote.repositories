@@ -1,0 +1,6 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed Mar 15 16:03:56 CST 2023
+maven-deploy-plugin-2.8.2.jar>mirrorId=
+maven-deploy-plugin-2.8.2.pom>mirrorId=
+maven-deploy-plugin-2.8.2.jar>central=
+maven-deploy-plugin-2.8.2.pom>central=

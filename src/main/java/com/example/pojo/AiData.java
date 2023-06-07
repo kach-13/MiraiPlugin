@@ -1,4 +1,4 @@
-package bot.pojo;
+package com.example.pojo;
 
 
 public class AiData {

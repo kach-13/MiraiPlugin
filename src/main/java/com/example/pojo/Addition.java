@@ -1,4 +1,4 @@
-package bot.pojo;
+package com.example.pojo;
 
 public class Addition {
     private Integer cfg_scale = 7;

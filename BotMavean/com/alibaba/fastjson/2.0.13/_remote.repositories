@@ -1,0 +1,6 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed Mar 15 16:02:55 CST 2023
+fastjson-2.0.13.jar>central=
+fastjson-2.0.13.jar>mirrorId=
+fastjson-2.0.13.pom>mirrorId=
+fastjson-2.0.13.pom>central=
