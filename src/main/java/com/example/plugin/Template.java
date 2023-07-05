@@ -590,8 +590,8 @@ public class Template extends JavaPlugin {
                     System.out.println(exchange.getBody());
                     g.getSubject().sendMessage(exchange.getBody());
 
-                }else if(g.getMessage().get(1).toString().equals("!我的金币"))
-                {RestTemplate restTemplate = new RestTemplate();
+                }else if(g.getMessage().get(1).toString().equals("!我的金币")) {
+                    RestTemplate restTemplate = new RestTemplate();
                     User user = new User();
                     user.setQqId(String.valueOf(g.getSender().getId()));
                     user.setGroupId(g.getGroup().toString());
@@ -648,15 +648,8 @@ public class Template extends JavaPlugin {
                     g.getSubject().sendMessage(s);
                     return;
                 }
-                else if(g.getMessage().get(1).toString().startsWith("!绘图")){
-                    int index = g.getMessage().get(1).toString().indexOf("图");
-                    String text = g.getMessage().get(1).toString().substring(index + 1);
-                    String s = HttpHelp.sendGet("localhost:9000/Ai/aiPictures?text=" + text);
-                    String ImageName = s;//从本地随机读取一张图片
-                    System.out.println(ImageName);
-                    ExternalResource externalResource = ExternalResource.create(new File(ImageName));
-                    Image image = g.getSubject().uploadImage(externalResource);
-                    g.getSubject().sendMessage(image);//发送图片
+                else if(g.getMessage().get(1).toString().equals("!会话重置")){
+                    System.out.println(HttpHelp.sendGet("localhost:9000/GPT/delsend?groupid="+String.valueOf(g.getGroup().getId())));
                 }
                 else{
                     g.getSubject().sendMessage("命令错误");
