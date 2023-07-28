@@ -20,9 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
-import java.lang.reflect.Method;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Template extends JavaPlugin {
@@ -628,10 +626,11 @@ public class Template extends JavaPlugin {
                         g.getSubject().sendMessage(chain);
                         return;
                     }
+                    GPTReturnData returnData = JSONObject.parseObject(s, GPTReturnData.class);
                     //回复某个人的消息
                     MessageChain chain = new MessageChainBuilder() // 引用收到的消息并回复 "Hi!", 也可以添加图片等更多元素.
                             .append(new QuoteReply(g.getMessage()))
-                            .append(s)
+                            .append(returnData.getText())
                             .build();
                     //发送内容
                     g.getSubject().sendMessage(chain);
