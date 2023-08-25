@@ -318,9 +318,22 @@ public class Template extends JavaPlugin {
                     UUID uuid=UUID.randomUUID();
                     String uuids = uuid.toString();//生成随机名字
                     String newImageName = uuids;
-                    String ImageName = "/home/bot/UserImage/PixiZc/" + newImageName + ".jpg" ;//从本地随机读取一张图片
+                    String ImageName = "/home/bot/UserImage/PixiZc/" + newImageName + ".jpg" ;
                     URL url = null;
-                    url = new URL(" https://iw233.cn/API/Random.php");
+                    url = new URL("https://iw233.cn/api.php?sort=random");
+                    // 打开连接
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setInstanceFollowRedirects(false);
+                    String location = urlConnection.getHeaderField("Location");
+
+                    url = new URL(location);
+                    // 打开连接
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    // 设置请求方法为GET
+                    connection.setRequestMethod("GET");
+                    // 设置请求头
+                    connection.setRequestProperty("Referer", "https://weibo.com/");
+
                     DataInputStream dataInputStream = new DataInputStream(url.openStream());
                     FileOutputStream fileOutputStream = new FileOutputStream(new File(ImageName));
                     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -332,7 +345,6 @@ public class Template extends JavaPlugin {
                     fileOutputStream.write(output.toByteArray());
                     ExternalResource externalResource = ExternalResource.create(new File(ImageName));
                     Image image = g.getSubject().uploadImage(externalResource);
-
                     At at = new At(g.getSender().getId());
                     MessageChain chain = new MessageChainBuilder()
                             .append(at)
