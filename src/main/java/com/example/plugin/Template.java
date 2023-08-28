@@ -10,6 +10,7 @@ import net.mamoe.mirai.event.Event;
 import net.mamoe.mirai.event.EventChannel;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
+import net.mamoe.mirai.message.action.Nudge;
 import net.mamoe.mirai.message.data.*;
 
 import net.mamoe.mirai.utils.ExternalResource;
@@ -834,7 +835,7 @@ public class Template extends JavaPlugin {
         //有人退出群
         eventEventChannel.subscribeAlways(MemberLeaveEvent.class , x -> {
             Member member = x.getMember();
-            x.getGroup().sendMessage(member.getId() + "退出群");
+            x.getGroup().sendMessage(member.getId() + "离开本群力");
         });
 
 //        eventEventChannel.subscribeAlways(MemberCardChangeEvent.class , x -> {
@@ -846,26 +847,81 @@ public class Template extends JavaPlugin {
         //有人戳一戳bot
         eventEventChannel.subscribeAlways(NudgeEvent.class , x -> {
             UserOrBot target = x.getTarget();
-           Long s =  x.getBot().getId();
+            Long s =  x.getBot().getId();
             System.out.println(s);
             if(target.getId() == x.getBot().getId()){
-                String ImageName = "/home/bot/UserImage/20221217191020.jpg";//从本地随机读取一张图片
-                ExternalResource externalResource = ExternalResource.create(new File(ImageName));
+//                String ImageName = "/home/bot/UserImage/20221217191020.jpg";//从本地随机读取一张图片
+//                ExternalResource externalResource = ExternalResource.create(new File(ImageName));
+//                Image image = x.getSubject().uploadImage(externalResource);
+//                MessageChain chain = new MessageChainBuilder()
+//                        .append(new PlainText("憋戳了呜呜呜"))
+//                        .append(image)
+//                        .build();
+//                x.getSubject().sendMessage(chain);//发送图片
+//                try {
+//                    externalResource.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+                /**
+                 * 获取 爬 图片
+                 * */
+                //https://api.andeer.top/API/img_crawl.php?qq=114514
+                File file = GroupText("https://api.andeer.top/API/img_crawl.php?qq=" + x.getFrom().getId());
+                ExternalResource externalResource = ExternalResource.create(file);
+                try {
                 Image image = x.getSubject().uploadImage(externalResource);
                 MessageChain chain = new MessageChainBuilder()
-                        .append(new PlainText("憋戳了呜呜呜"))
+                        .append(new PlainText("nnd戳我是吧,我也戳你!"))
                         .append(image)
                         .build();
                 x.getSubject().sendMessage(chain);//发送图片
-                try {
-                    externalResource.close();
+                file.delete();
+                externalResource.close();
+                //构造戳一戳
+                    Nudge nudge = x.getFrom().nudge();
+                    Contact subject = x.getSubject();
+                    System.out.println(subject.getId());
+                    nudge.sendTo(subject);
                 } catch (IOException e) {
+                    file.delete();
                     e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
 
         });
     }
-
+    //根据URL获取图片对象
+    public File GroupText(String URL) {
+        System.out.println(URL);
+        URL url = null;
+        try {
+            url = new URL(URL);
+            // System.out.println(URL);
+            URLConnection connection = url.openConnection();
+            BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
+            long l = System.currentTimeMillis();
+            String FileName = String.valueOf(l);//视频封面存服务器的名字
+            File file = new File("/home/bot/Audio/" + FileName + ".jpg");
+            FileOutputStream out = new FileOutputStream(file);
+            byte[] buffer = new byte[2048];
+            int numRead;
+            while ((numRead = in.read(buffer)) != -1) {
+                out.write(buffer, 0, numRead);
+            }
+            if (in != null) {
+                in.close();
+            }
+            if (out != null) {
+                out.close();
+            }
+            //System.out.println("图片ok");
+            return file;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }
