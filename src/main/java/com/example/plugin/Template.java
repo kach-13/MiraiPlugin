@@ -358,76 +358,7 @@ public class Template extends JavaPlugin {
                     externalResource.close();//结束关流
                     dataInputStream.close();
                     fileOutputStream.close();
-                } else if(g.getMessage().get(1).toString().startsWith("!arc")){
-                    int indexF = g.getMessage().get(1).toString().indexOf("|");
-                    int indexL = g.getMessage().get(1).toString().lastIndexOf("|");
-                    //第二部是歌名
-                    String musicName = g.getMessage().get(1).toString().substring(indexF+1 , indexL);
-                    //难度
-                    String nd = g.getMessage().get(1).toString().substring(indexL + 1);
-                    if(musicName.equals(" ") || nd.equals(" ") ){
-                        g.getSubject().sendMessage("图片/难度未填");
-                    }
-                    try {
-                        //第三部分是图片
-                        Image image = (Image) g.getMessage().get(2);
-
-                        UUID uuid=UUID.randomUUID();
-                        String uuids = uuid.toString();//生成随机名字
-                        int index = image.getImageId().lastIndexOf("}");
-                        String gs = image.getImageId().substring(index+1);//个数
-                        String newImageName = uuids + gs;
-                        String ImageName = "/home/bot/UserImage/ArcImage/" + newImageName ;//从本地随机读取一张图片
-                        String s = Image.queryUrl(image);
-                        URL url = null;
-
-                        url = new URL(s);
-                        DataInputStream dataInputStream = new DataInputStream(url.openStream());
-                        FileOutputStream fileOutputStream = new FileOutputStream(new File(ImageName));
-                        ByteArrayOutputStream output = new ByteArrayOutputStream();
-
-                        byte[] buffer = new byte[8192];
-                        int length;
-
-                        while ((length = dataInputStream.read(buffer)) > 0) {
-                            output.write(buffer, 0, length);
-                        }
-                        fileOutputStream.write(output.toByteArray());
-                        dataInputStream.close();
-                        fileOutputStream.close();
-                        //上传人
-                        Long sendName = g.getSender().getId();
-                        //String Url = "localhost:9000/image/arcImage?musicName=" + musicName + "&nd=" + nd + "&imagename" + newImageName +  "&sendName=" + sendName;
-                        JSONObject object = new JSONObject();
-                        object.put("musicName",musicName);
-                        object.put("level",nd);
-                        object.put("gameimage",newImageName);
-                        object.put("sendName",sendName);
-
-                        String s1 = HttpHelp.sendPost("http://localhost:9000/image/arcImage",object.toJSONString(),null);
-                        System.out.println(s1);
-                        if(s1.equals("false")){
-                            //回复某个人的消息
-                            MessageChain chain = new MessageChainBuilder() // 引用收到的消息并回复 "Hi!", 也可以添加图片等更多元素.
-                                    .append(new QuoteReply(g.getMessage()))
-                                    .append("分数上传失败")
-                                    .build();
-                            g.getSubject().sendMessage(chain);
-                            return;
-                        }else{
-                            //回复某个人的消息
-                            MessageChain chain = new MessageChainBuilder() // 引用收到的消息并回复 "Hi!", 也可以添加图片等更多元素.
-                                    .append(new QuoteReply(g.getMessage()))
-                                    .append("分数上传成功")
-                                    .build();
-                            g.getSubject().sendMessage(chain);
-                        }
-
-                    }  catch (Exception e) {
-                        e.printStackTrace();
-                        g.getSubject().sendMessage("没有图片/名字");
-                    }
-                }else if(g.getMessage().get(1).toString().equals("!讲个笑话")){
+                } else if(g.getMessage().get(1).toString().equals("!讲个笑话")){
                         String s =  HttpHelp.sendGet("localhost:9000/send/getjoker");
                      g.getSubject().sendMessage(String.valueOf(s));
 
@@ -439,12 +370,18 @@ public class Template extends JavaPlugin {
                     String ImageName = "/home/bot/UserImage/PixivR18/" + newImageName + ".jpg" ;//从本地随机读取一张图片
                     URL url = null;
                     try{
-                        url = new URL("https://image.anosu.top/pixiv/direct?r18=1&keyword=");
+                       // url = new URL("https://image.anosu.top/pixiv/direct?r18=1&keyword=");效率太低
+                        url = new URL("http://api.yujn.cn/api/sese.php");
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        String newHttpUrl = connection.getHeaderField("Location");
+                        System.out.println("重定向后的新地址：" + newHttpUrl);
+                        url = new URL(newHttpUrl);//从重定向的接口拿数据
+
                         DataInputStream dataInputStream = new DataInputStream(url.openStream());
 
                         FileOutputStream fileOutputStream = new FileOutputStream(new File(ImageName));
                         ByteArrayOutputStream output = new ByteArrayOutputStream();
-                        byte[] buffer = new byte[8192];
+                        byte[] buffer = new byte[2048];
                         int length;
                         while ((length = dataInputStream.read(buffer)) > 0) {
                             output.write(buffer, 0, length);
