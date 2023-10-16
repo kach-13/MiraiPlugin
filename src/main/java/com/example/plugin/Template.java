@@ -1,7 +1,10 @@
 package com.example.plugin;
 import com.alibaba.fastjson.JSONObject;
+import com.example.conf.PathConf;
 import com.example.pojo.*;
 import com.example.pojo.User;
+import net.mamoe.mirai.console.command.Command;
+import net.mamoe.mirai.console.command.CommandManager;
 import net.mamoe.mirai.console.extension.PluginComponentStorage;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
@@ -22,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.Path;
 import java.util.*;
 
 public class Template extends JavaPlugin {
@@ -42,11 +46,44 @@ public class Template extends JavaPlugin {
     public void onLoad(@NotNull PluginComponentStorage $this$onLoad) {
 
     }
+
+
     //创建一个对象
     Random df = new Random();
     EventChannel<Event> eventEventChannel = GlobalEventChannel.INSTANCE.parentScope(this);
     @Override
     public void onEnable() {
+
+//        List<Command> allRegisteredCommands = CommandManager.INSTANCE.getAllRegisteredCommands();
+//        System.out.println("当前指令集合");
+//        for(int i = 0 ; i < allRegisteredCommands.size() ; i ++){
+//            System.out.println(allRegisteredCommands.get(i).getPrimaryName() + "," + allRegisteredCommands.get(i).getDescription());
+//        }
+//        try {
+//            //初始化插件校验PathConf内的目录是否存在
+//            File file1 = new File(PathConf.normalimgPath);
+//            if(!file1.exists()){
+//                file1.mkdirs();
+//                System.out.println(PathConf.normalimgPath+"创建成功");
+//            }
+//            file1 = new File(PathConf.HimgPath);
+//            if(!file1.exists()){
+//                file1.mkdirs();
+//                System.out.println(PathConf.HimgPath+"创建成功");
+//            }
+//            file1 = new File(PathConf.uploadNormalimgPath);
+//            if(!file1.exists()){
+//                file1.mkdirs();
+//                System.out.println(PathConf.uploadNormalimgPath+"创建成功");
+//            }
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+
+
+
+
+
         //监听群内消息
         eventEventChannel.subscribeAlways(GroupMessageEvent.class , g -> {
            // g.getGroup().getSettings().getEntranceAnnouncement()
@@ -231,26 +268,27 @@ public class Template extends JavaPlugin {
                         g.getSubject().sendMessage("权限不足");
                     }
                 }
-                else if(g.getMessage().get(1).toString().equals("!踢出")){
-                    //获取@信息
-                    At at = (At) g.getMessage().get(2);
-                    //判断bot是否有禁言权限
-                    String BotRole = g.getGroup().getBotPermission().toString();
-                    if( BotRole == "MEMBER"){
-                        g.getSubject().sendMessage("Bot没有权限");
-                        return;
-                    }
-                    //获取群成员实例
-                    ContactList<NormalMember> members = g.getGroup().getMembers();
-                    //判断对方权限
-                    if( members.get(at.getTarget()).getPermission().toString().equals("OWNER") || members.get(at.getTarget()).getPermission().toString().equals("ADMINISTRATOR")){
-                        g.getSubject().sendMessage("Bot不可踢出管理/群主");
-                    }
-                    else{
-                        g.getGroup().get(at.getTarget()).kick("已将"+ at.getTarget() + "移除群");
-                    }
-
-                }else if(g.getMessage().get(1).toString().equals("!上传"))
+//                else if(g.getMessage().get(1).toString().equals("!踢出")){
+//                    //获取@信息
+//                    At at = (At) g.getMessage().get(2);
+//                    //判断bot是否有禁言权限
+//                    String BotRole = g.getGroup().getBotPermission().toString();
+//                    if( BotRole == "MEMBER"){
+//                        g.getSubject().sendMessage("Bot没有权限");
+//                        return;
+//                    }
+//                    //获取群成员实例
+//                    ContactList<NormalMember> members = g.getGroup().getMembers();
+//                    //判断对方权限
+//                    if( members.get(at.getTarget()).getPermission().toString().equals("OWNER") || members.get(at.getTarget()).getPermission().toString().equals("ADMINISTRATOR")){
+//                        g.getSubject().sendMessage("Bot不可踢出管理/群主");
+//                    }
+//                    else{
+//                        g.getGroup().get(at.getTarget()).kick("已将"+ at.getTarget() + "移除群");
+//                    }
+//
+//                }
+                else if(g.getMessage().get(1).toString().equals("!上传"))
                 {
                     try {
                         long id = g.getSender().getId();
@@ -272,7 +310,7 @@ public class Template extends JavaPlugin {
                         int index = image.getImageId().lastIndexOf("}");
                         String gs = image.getImageId().substring(index+1);//个数
                         String newImageName = uuids + gs;
-                        String ImageName = "/home/bot/UserImage/BotImage/" + newImageName ;//生成图片名字
+                        String ImageName = PathConf.uploadNormalimgPath + newImageName ;//生成图片名字
                         System.out.println(ImageName);
                         String s = Image.queryUrl(image);
                         URL url = null;
@@ -319,7 +357,7 @@ public class Template extends JavaPlugin {
                     UUID uuid=UUID.randomUUID();
                     String uuids = uuid.toString();//生成随机名字
                     String newImageName = uuids;
-                    String ImageName = "/home/bot/UserImage/PixiZc/" + newImageName + ".jpg" ;
+                    String ImageName = PathConf.normalimgPath + newImageName + ".jpg" ;
                     URL url = null;
                     url = new URL("https://iw233.cn/api.php?sort=random");
                     // 打开连接
@@ -358,48 +396,46 @@ public class Template extends JavaPlugin {
                     externalResource.close();//结束关流
                     dataInputStream.close();
                     fileOutputStream.close();
-                } else if(g.getMessage().get(1).toString().equals("!讲个笑话")){
-                        String s =  HttpHelp.sendGet("localhost:9000/send/getjoker");
-                     g.getSubject().sendMessage(String.valueOf(s));
-
-                }else if(g.getMessage().get(1).toString().equals("!随机色图")){
-                    UUID uuid=UUID.randomUUID();
-                    String uuids = uuid.toString();//生成随机名字
-                    String newImageName = uuids;
-                    //图片保存的地址
-                    String ImageName = "/home/bot/UserImage/PixivR18/" + newImageName + ".jpg" ;//从本地随机读取一张图片
-                    URL url = null;
-                    try{
-                       // url = new URL("https://image.anosu.top/pixiv/direct?r18=1&keyword=");效率太低
-                        url = new URL("http://api.yujn.cn/api/sese.php");
-                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                        String newHttpUrl = connection.getHeaderField("Location");
-                        System.out.println("重定向后的新地址：" + newHttpUrl);
-                        url = new URL(newHttpUrl);//从重定向的接口拿数据
-
-                        DataInputStream dataInputStream = new DataInputStream(url.openStream());
-
-                        FileOutputStream fileOutputStream = new FileOutputStream(new File(ImageName));
-                        ByteArrayOutputStream output = new ByteArrayOutputStream();
-                        byte[] buffer = new byte[2048];
-                        int length;
-                        while ((length = dataInputStream.read(buffer)) > 0) {
-                            output.write(buffer, 0, length);
-                        }
-                        fileOutputStream.write(output.toByteArray());
-                        ExternalResource externalResource = ExternalResource.create(new File(ImageName));
-                        String newUrl = "localhost:9000/send/messgin?sendQQ=" + String.valueOf(g.getSender().getId()) + "@qq.com&imagePath=" + newImageName + ".jpg";
-                        HttpHelp.sendGetNoReturn(newUrl);
-                        g.getSubject().sendMessage("图片发送中");
-                        //Image image = g.getSubject().uploadImage(externalResource);
-                        //使用邮箱发送就不用这个了
-                        externalResource.close();//结束关流
-                        dataInputStream.close();
-                        fileOutputStream.close();
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }else if(g.getMessage().get(1).toString().startsWith("!搜歌")){
+                }
+//                else if(g.getMessage().get(1).toString().equals("!随机色图")){
+//                    UUID uuid=UUID.randomUUID();
+//                    String uuids = uuid.toString();//生成随机名字
+//                    String newImageName = uuids;
+//                    //图片保存的地址
+//                    String ImageName = PathConf.HimgPath + newImageName + ".jpg" ;
+//                    URL url = null;
+//                    try{
+//                       // url = new URL("https://image.anosu.top/pixiv/direct?r18=1&keyword=");效率太低
+//                        url = new URL("http://api.yujn.cn/api/sese.php");
+//                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                        String newHttpUrl = connection.getHeaderField("Location");
+//                        System.out.println("重定向后的新地址：" + newHttpUrl);
+//                        url = new URL(newHttpUrl);//从重定向的接口拿数据
+//
+//                        DataInputStream dataInputStream = new DataInputStream(url.openStream());
+//
+//                        FileOutputStream fileOutputStream = new FileOutputStream(new File(ImageName));
+//                        ByteArrayOutputStream output = new ByteArrayOutputStream();
+//                        byte[] buffer = new byte[2048];
+//                        int length;
+//                        while ((length = dataInputStream.read(buffer)) > 0) {
+//                            output.write(buffer, 0, length);
+//                        }
+//                        fileOutputStream.write(output.toByteArray());
+//                        ExternalResource externalResource = ExternalResource.create(new File(ImageName));
+//                        String newUrl = "localhost:9000/send/messgin?sendQQ=" + String.valueOf(g.getSender().getId()) + "@qq.com&imagePath=" + newImageName + ".jpg";
+//                        HttpHelp.sendGetNoReturn(newUrl);
+//                        g.getSubject().sendMessage("图片发送中");
+//                        //Image image = g.getSubject().uploadImage(externalResource);
+//                        //使用邮箱发送就不用这个了
+//                        externalResource.close();//结束关流
+//                        dataInputStream.close();
+//                        fileOutputStream.close();
+//                    }catch (Exception e){
+//                        e.printStackTrace();
+//                    }
+//                }
+                else if(g.getMessage().get(1).toString().startsWith("!搜歌")){
                     int index = g.getMessage().get(1).toString().indexOf("歌");
                     String musicname = g.getMessage().get(1).toString().substring(index + 1);
                     musicname = URLEncoder.encode(musicname, "utf-8");
@@ -450,113 +486,42 @@ public class Template extends JavaPlugin {
                             "[分享]"+songs.getName()
                     );
                     g.getSubject().sendMessage(musicShare);
-                }else if(g.getMessage().get(1).toString().startsWith("!翻译")){
-                    int index = g.getMessage().get(1).toString().indexOf("译");
-                    String id = g.getMessage().get(1).toString().substring(index + 1);
-                    //去掉所有空格
-                    String url = "localhost:9000/baidu/translate?g=" + id.replaceAll(" +","");;
-                    String s = HttpHelp.sendGet(url);
-                    g.getSubject().sendMessage(s);
-                }else if(g.getMessage().get(1).toString().startsWith("!创建转盘")){
-                    int index = g.getMessage().get(1).toString().indexOf("盘");
-                    String ammunitionloaded = g.getMessage().get(1).toString().substring(index + 1);
-                    //去掉所有空格
-                    //装弹数
-                    ammunitionloaded = ammunitionloaded.replaceAll(" +","");
-                    StringBuffer parm = new StringBuffer();
-                    parm.append("groupId="+g.getGroup().getId()+"&");
-                    parm.append("sponsor="+g.getSender().getId()+"&");
-                    parm.append("ammunitionLoaded="+ammunitionloaded+"&");
-
-                    String s = HttpHelp.sendPost("http://localhost:9000/russianturntable/createrussianturntable", parm.toString());
-                    g.getSubject().sendMessage(s);
-                }else if(g.getMessage().get(1).toString().equals("!加入对局")){
-                    String id = HttpHelp.sendGet("localhost:9000/russianturntable/joinrussianturntable?groupid="+g.getGroup().getId()+"&recipient="+g.getSender().getId());
-                    System.out.println(id);
-                    if(id.equals("false")){
-                        g.getSubject().sendMessage("对局已开始，无法加入");
-                    }
-                    if(id.equals("joinerror")){
-                        g.getSubject().sendMessage("不能加入自己的对局");
-                    }
-                    else {
-                        NormalMember normalMember = g.getGroup().getMembers().get(Long.parseLong(id));
-                        // for(int i = 0 ; i < members.size() ; i ++){
-                                At at = new At(normalMember.getId());
-                                MessageChain chain = new MessageChainBuilder()
-                                        .append(new PlainText("加入成功，第一轮由"))
-                                        .append(at)
-                                        .append(new PlainText("开枪"))
-                                        //.append("id") // 会被构造成 PlainText 再添加, 相当于上一行
-                                        // .append(AtAll.INSTANCE)
-                                        .build();
-                                g.getSubject().sendMessage(chain);
-                                return;
-                           // }
-                        }
-                }else if(g.getMessage().get(1).toString().equals("!开枪")){
-                    String status = HttpHelp.sendGet("localhost:9000/russianturntable/fire?"+"groupid="+g.getGroup().getId() +"&userid=" + g.getSender().getId());
-                    if(status.startsWith("dead")){
-                        int index = status.indexOf(":");
-                        status = status.substring(index + 1);
-                        At at = new At(Long.valueOf(status));
-                        MessageChain chain = new MessageChainBuilder()
-                                .append(new PlainText("你死了"))
-                                .append(at)
-                                .append(new PlainText("是胜利者"))
-                                //.append("id") // 会被构造成 PlainText 再添加, 相当于上一行
-                                // .append(AtAll.INSTANCE)
-                                .build();
-                        g.getSubject().sendMessage(chain);
-                        return;
-                    }
-                    if(status.startsWith("alie")){
-                        int index = status.indexOf(":");
-                        status = status.substring(index + 1);
-                        At at = new At(Long.valueOf(status));
-                        MessageChain chain = new MessageChainBuilder()
-                                .append(new PlainText("你没死，下一轮"))
-                                .append(at)
-                                .append(new PlainText("开枪！"))
-                                .build();
-                        g.getSubject().sendMessage(chain);
-                        return;
-                    }
-                    g.getSubject().sendMessage(status);
-                }else if(g.getMessage().get(1).toString().equals("!签到")){
-                    RestTemplate restTemplate = new RestTemplate();
-                    User user = new User();
-                    user.setQqId(String.valueOf(g.getSender().getId()));
-                    user.setGroupId(g.getGroup().toString());
-                    String url = "http://localhost:9000/user/sign/";
-                    Map map = new HashMap();
-                    map.put("qqId",String.valueOf(g.getSender().getId()));
-                    map.put("groupId",g.getGroup().toString());
-                    HttpEntity httpEntity = new HttpEntity(map);
-                    ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
-                    //String messg = restTemplate.postForObject(url, user, String.class);
-                    System.out.println(exchange.getBody());
-                    g.getSubject().sendMessage(exchange.getBody());
-
-                }else if(g.getMessage().get(1).toString().equals("!我的金币")) {
-                    RestTemplate restTemplate = new RestTemplate();
-                    User user = new User();
-                    user.setQqId(String.valueOf(g.getSender().getId()));
-                    user.setGroupId(g.getGroup().toString());
-                    String url = "http://localhost:9000/user/getcoin/";
-                    Map map = new HashMap();
-                    map.put("qqId",String.valueOf(g.getSender().getId()));
-                    map.put("groupId",g.getGroup().toString());
-                    HttpEntity httpEntity = new HttpEntity(map);
-                    ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
-                    //构造at对象
-                    At at = new At(g.getSender().getId());
-                    MessageChain chain = new MessageChainBuilder()
-                            .append(at)
-                            .append(new PlainText(exchange.getBody()))
-                            .build();
-                    g.getSubject().sendMessage(chain);
-                }else if(str.startsWith("!问")){
+                }
+//                else if(g.getMessage().get(1).toString().equals("!签到")){
+//                    RestTemplate restTemplate = new RestTemplate();
+//                    User user = new User();
+//                    user.setQqId(String.valueOf(g.getSender().getId()));
+//                    user.setGroupId(g.getGroup().toString());
+//                    String url = "http://localhost:9000/user/sign/";
+//                    Map map = new HashMap();
+//                    map.put("qqId",String.valueOf(g.getSender().getId()));
+//                    map.put("groupId",g.getGroup().toString());
+//                    HttpEntity httpEntity = new HttpEntity(map);
+//                    ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+//                    //String messg = restTemplate.postForObject(url, user, String.class);
+//                    System.out.println(exchange.getBody());
+//                    g.getSubject().sendMessage(exchange.getBody());
+//
+//                }else if(g.getMessage().get(1).toString().equals("!我的金币")) {
+//                    RestTemplate restTemplate = new RestTemplate();
+//                    User user = new User();
+//                    user.setQqId(String.valueOf(g.getSender().getId()));
+//                    user.setGroupId(g.getGroup().toString());
+//                    String url = "http://localhost:9000/user/getcoin/";
+//                    Map map = new HashMap();
+//                    map.put("qqId",String.valueOf(g.getSender().getId()));
+//                    map.put("groupId",g.getGroup().toString());
+//                    HttpEntity httpEntity = new HttpEntity(map);
+//                    ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+//                    //构造at对象
+//                    At at = new At(g.getSender().getId());
+//                    MessageChain chain = new MessageChainBuilder()
+//                            .append(at)
+//                            .append(new PlainText(exchange.getBody()))
+//                            .build();
+//                    g.getSubject().sendMessage(chain);
+//                }
+                else if(str.startsWith("!问")){
                     System.out.println(str);
                     int index = g.getMessage().get(1).toString().indexOf("问");
                     //要问的内容
@@ -584,19 +549,20 @@ public class Template extends JavaPlugin {
                             .build();
                     //发送内容
                     g.getSubject().sendMessage(chain);
-                }else if(g.getMessage().get(1).toString().startsWith("!风格设置")){
-                    //设置聊天风格
-                    int index = g.getMessage().get(1).toString().indexOf("置");
-                    String type = g.getMessage().get(1).toString().substring(index + 1);
-                    String s = HttpHelp.sendGet("localhost:9000/GPT/updataChatType?type=" + type);
-                    g.getSubject().sendMessage(s);
-                    return;
                 }
-                else if(g.getMessage().get(1).toString().startsWith("!风格查看")){
-                    String s = HttpHelp.sendGet("localhost:9000/GPT/getChatType");
-                    g.getSubject().sendMessage(s);
-                    return;
-                }
+//                else if(g.getMessage().get(1).toString().startsWith("!风格设置")){
+//                    //设置聊天风格
+//                    int index = g.getMessage().get(1).toString().indexOf("置");
+//                    String type = g.getMessage().get(1).toString().substring(index + 1);
+//                    String s = HttpHelp.sendGet("localhost:9000/GPT/updataChatType?type=" + type);
+//                    g.getSubject().sendMessage(s);
+//                    return;
+//                }
+//                else if(g.getMessage().get(1).toString().startsWith("!风格查看")){
+//                    String s = HttpHelp.sendGet("localhost:9000/GPT/getChatType");
+//                    g.getSubject().sendMessage(s);
+//                    return;
+//                }
                 else if(g.getMessage().get(1).toString().equals("!会话重置")){
                     System.out.println(HttpHelp.sendGet("localhost:9000/GPT/delsend?groupid="+String.valueOf(g.getGroup().getId())));
                 }
@@ -614,27 +580,13 @@ public class Template extends JavaPlugin {
         eventEventChannel.subscribeAlways(FriendMessageEvent.class , f -> {
             String str =  f.getMessage().get(1).toString();
             System.out.println(f.getMessage().get(1));
-            if(str.equals("色图")){
-                String s = HttpHelp.GetImageString(2);//是h图
-                BotImage nameList = JSONObject.parseObject(s, BotImage.class);
-                System.out.println("s图名：" + nameList.getImagename());
-                String ImageName = "/home/bot/UserImage/BotImage/" + nameList.getImagename();//从本地随机读取一张图片
-                System.out.println(ImageName);
-                ExternalResource externalResource = ExternalResource.create(new File(ImageName));
-                Image image = f.getSubject().uploadImage(externalResource);
-                f.getSubject().sendMessage(image);//发送图片
-                try {
-                    externalResource.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }else if(str.equals("删除好友")){
+            if(str.equals("删除好友")){
                 f.getFriend().delete();
             }else if(f.getMessage().get(1).toString().startsWith("随机色图")) {
                 UUID uuid = UUID.randomUUID();
                 String uuids = uuid.toString();//生成随机名字
                 String newImageName = uuids;
-                String ImageName = "/home/bot/UserImage/PixivR18/" + newImageName + ".jpg";//从本地随机读取一张图片
+                String ImageName = PathConf.HimgPath + newImageName + ".jpg";
                 URL url = null;
                 try {
                     String stType = "";
@@ -666,8 +618,8 @@ public class Template extends JavaPlugin {
                     }
                     url = new URL("https://image.anosu.top/pixiv/direct?r18=1&keyword=" + stType);
                     DataInputStream dataInputStream = new DataInputStream(url.openStream());
-
-                    FileOutputStream fileOutputStream = new FileOutputStream(new File(ImageName));
+                    File file = new File(ImageName);
+                    FileOutputStream fileOutputStream = new FileOutputStream(file);
                     ByteArrayOutputStream output = new ByteArrayOutputStream();
                     byte[] buffer = new byte[1024];
                     int length;
@@ -688,23 +640,10 @@ public class Template extends JavaPlugin {
                     externalResource.close();//结束关流
                     dataInputStream.close();
                     fileOutputStream.close();
+                    file.delete();
                 } catch (Exception e) {
                     f.getSubject().sendMessage("请输入1-6数字");//发送图片
                     e.printStackTrace();
-                }
-            }else if(str.equals("网盘绑定")){
-                String codeURL = "http://openapi.baidu.com/oauth/2.0/authorize?response_type=code&client_id=5YWXrO9cahksXbKY3HVvG3QIfImpC1j0&redirect_uri=http://8.130.83.222:9000/baidu/returnData&scope=basic,netdisk&state="+f.getFriend().getId();
-                System.out.println(codeURL);
-                f.getFriend().sendMessage("请打开URL复制到浏览器进行绑定");
-                f.getFriend().sendMessage(codeURL);
-            }
-            else if(str.equals("绑定状态查询")){
-                String s = HttpHelp.sendGet("localhost:9000/baidu/select?qqid=" + f.getFriend().getId());
-                if (s.equals("true")){
-                    f.getFriend().sendMessage("绑定成功");
-                }
-                else{
-                    f.getFriend().sendMessage("绑定失败。请联系bot开发者");
                 }
             }
         });
@@ -719,36 +658,6 @@ public class Template extends JavaPlugin {
         });
         //监听群临时会话
         eventEventChannel.subscribeAlways(GroupTempMessageEvent.class , f -> {
-            String str =  f.getMessage().get(1).toString();
-            if(str.equals("st")){
-                String s = HttpHelp.GetImageString(2);//是h图
-                String ImageName = "/home/bot/UserImage/BotImage/" + s;//从本地随机读取一张图片
-                System.out.println(s);
-                ExternalResource externalResource =ExternalResource.create(new File(ImageName));
-                Image image = f.getSubject().uploadImage(externalResource);
-                f.getSubject().sendMessage(image);//发送图片
-                try {
-                    externalResource.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else if(str.equals("随机色图")){
-                String s = HttpHelp.GetImageString(2);//是h图
-                String ImageName = "/home/bot/UserImage/BotImage/" + s;//从本地随机读取一张图片
-                System.out.println(ImageName);
-                Image image = f.getSubject().uploadImage(ExternalResource.create(new File(ImageName)));
-                //回复某个人的消息
-                MessageChain chain = new MessageChainBuilder() // 引用收到的消息并回复 "Hi!", 也可以添加图片等更多元素.
-                        .append(new QuoteReply(f.getMessage()))
-                        .append(image)
-                        .build();
-                f.getSubject().sendMessage(chain);
-                // g.getSubject().sendMessage(image);//发送图片
-            }
-            if(str.equals("消息")){
-                System.out.println(str);
-                f.getSubject().sendMessage("临时消息");
-            }
         });
 
         //有人加入群后
@@ -840,7 +749,7 @@ public class Template extends JavaPlugin {
             BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
             long l = System.currentTimeMillis();
             String FileName = String.valueOf(l);//视频封面存服务器的名字
-            File file = new File("/home/bot/Audio/" + FileName + ".jpg");
+            File file = new File(PathConf.normalimgPath + FileName + ".jpg");
             FileOutputStream out = new FileOutputStream(file);
             byte[] buffer = new byte[2048];
             int numRead;
