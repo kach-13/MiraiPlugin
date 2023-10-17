@@ -144,7 +144,7 @@ public class Template extends JavaPlugin {
                     String s = HttpHelp.GetImageString(1);//不是h图
                     BotImage nameList = JSONObject.parseObject(s, BotImage.class);
                     System.out.println("图片名称：" + nameList.getImagename());
-                    String ImageName = "/home/bot/UserImage/BotImage/" + nameList.getImagename();//从本地随机读取一张图片
+                    String ImageName = PathConf.uploadNormalimgPath + nameList.getImagename();//从本地随机读取一张图片
 
                     ExternalResource externalResource = ExternalResource.create(new File(ImageName));
                     Image image = g.getSubject().uploadImage(externalResource);
