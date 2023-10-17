@@ -145,8 +145,8 @@ public class Template extends JavaPlugin {
                     BotImage nameList = JSONObject.parseObject(s, BotImage.class);
                     System.out.println("图片名称：" + nameList.getImagename());
                     String ImageName = PathConf.uploadNormalimgPath + nameList.getImagename();//从本地随机读取一张图片
-
-                    ExternalResource externalResource = ExternalResource.create(new File(ImageName));
+                    File file = new File(ImageName);
+                    ExternalResource externalResource = ExternalResource.create(file);
                     Image image = g.getSubject().uploadImage(externalResource);
                     At at = new At(g.getSender().getId());
                     //创建一个消息链
@@ -159,6 +159,7 @@ public class Template extends JavaPlugin {
                             .build();
                     g.getSubject().sendMessage(chain);//发送图片
                     externalResource.close();//结束关流
+                    file.delete();
                 }else if(str.startsWith("!删除图片")){
                    int index = str.lastIndexOf("片");
                     str = str.substring(index + 1);
@@ -374,7 +375,8 @@ public class Template extends JavaPlugin {
                     connection.setRequestProperty("Referer", "https://weibo.com/");
 
                     DataInputStream dataInputStream = new DataInputStream(url.openStream());
-                    FileOutputStream fileOutputStream = new FileOutputStream(new File(ImageName));
+                    File file1 = new File(ImageName);
+                    FileOutputStream fileOutputStream = new FileOutputStream(file1);
                     ByteArrayOutputStream output = new ByteArrayOutputStream();
                     byte[] buffer = new byte[8192];
                     int length;
@@ -382,7 +384,8 @@ public class Template extends JavaPlugin {
                         output.write(buffer, 0, length);
                     }
                     fileOutputStream.write(output.toByteArray());
-                    ExternalResource externalResource = ExternalResource.create(new File(ImageName));
+                    File file = new File(ImageName);
+                    ExternalResource externalResource = ExternalResource.create(file);
                     Image image = g.getSubject().uploadImage(externalResource);
                     At at = new At(g.getSender().getId());
                     MessageChain chain = new MessageChainBuilder()
@@ -396,6 +399,8 @@ public class Template extends JavaPlugin {
                     externalResource.close();//结束关流
                     dataInputStream.close();
                     fileOutputStream.close();
+                    file.delete();
+                    file1.delete();
                 }
 //                else if(g.getMessage().get(1).toString().equals("!随机色图")){
 //                    UUID uuid=UUID.randomUUID();
