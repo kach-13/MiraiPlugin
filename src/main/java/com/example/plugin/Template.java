@@ -27,6 +27,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Template extends JavaPlugin {
     public static Template INSTANCE = new Template();
@@ -456,9 +457,14 @@ public class Template extends JavaPlugin {
                     returns returns = JSONObject.parseObject(s, returns.class);
                     StringBuffer stringBuffer = new StringBuffer();
                     for(int i = 0 ; i<returns.getResult().getSongs().size() ; i++){
-
+//                        StringBuffer stringBufferName = new StringBuffer();
+//                        for(artists data : returns.getResult().getSongs().get(i).getArtists()){
+//                            //作者名可能会有多个
+//                            stringBufferName.append(data.getName());
+//                        }
+                        String collect = returns.getResult().getSongs().get(i).getArtists().stream().map(artists::getName).collect(Collectors.joining("/"));
                         stringBuffer.append("id:"+returns.getResult().getSongs().get(i).getId() + "\n"//id
-                                + returns.getResult().getSongs().get(i).getName()+"---"+ returns.getResult().getSongs().get(i).getArtists().get(0).getName() + "\n"//歌名//作者
+                                + returns.getResult().getSongs().get(i).getName()+"---"+ collect + "\n"//歌名 + 作者
                                 + returns.getResult().getSongs().get(i).getAlias()+"\n"+"\n");
 
                     }
@@ -478,15 +484,16 @@ public class Template extends JavaPlugin {
                         return;
                     }
                     songs songs = JSONObject.parseObject(s, songs.class);
-                    StringBuffer stringBuffer = new StringBuffer();
-                    for(artists data : songs.getArtists()){
-                        //作者名可能会有多个
-                        stringBuffer.append(data.getName());
-                    }
+//                    StringBuffer stringBuffer = new StringBuffer();
+//                    for(artists data : songs.getArtists()){
+//                        //作者名可能会有多个
+//                        stringBuffer.append(data.getName());
+//                    }
+                    String collect = songs.getArtists().stream().map(artists::getName).collect(Collectors.joining("/"));
                     MusicShare musicShare = new MusicShare(
                             MusicKind.NeteaseCloudMusic,
                             songs.getName(),//歌名
-                            stringBuffer.toString(),
+                            collect,
                             //点击跳转页面的地址
                             "https://y.music.163.com/m/song?id=" + songs.getId(),
                             //音乐封面地址
