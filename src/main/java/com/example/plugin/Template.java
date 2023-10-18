@@ -478,10 +478,15 @@ public class Template extends JavaPlugin {
                         return;
                     }
                     songs songs = JSONObject.parseObject(s, songs.class);
+                    StringBuffer stringBuffer = new StringBuffer();
+                    for(artists data : songs.getArtists()){
+                        //作者名可能会有多个
+                        stringBuffer.append(data.getName());
+                    }
                     MusicShare musicShare = new MusicShare(
                             MusicKind.NeteaseCloudMusic,
                             songs.getName(),//歌名
-                            songs.getArtists().get(0).getName(),//作者名
+                            stringBuffer.toString(),
                             //点击跳转页面的地址
                             "https://y.music.163.com/m/song?id=" + songs.getId(),
                             //音乐封面地址
