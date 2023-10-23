@@ -1,6 +1,7 @@
 package com.example.plugin;
 import com.alibaba.fastjson.JSONObject;
 import com.example.conf.PathConf;
+import com.example.conf.TrustAllCertificates;
 import com.example.pojo.*;
 import com.example.pojo.User;
 import net.mamoe.mirai.console.command.Command;
@@ -23,6 +24,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import java.io.*;
 import java.net.*;
 import java.nio.file.Path;
@@ -493,7 +497,7 @@ public class Template extends JavaPlugin {
                     MusicShare musicShare = new MusicShare(
                             MusicKind.NeteaseCloudMusic,
                             songs.getName(),//歌名
-                            collect,
+                            collect,//作者名
                             //点击跳转页面的地址
                             "https://y.music.163.com/m/song?id=" + songs.getId(),
                             //音乐封面地址
@@ -760,6 +764,16 @@ public class Template extends JavaPlugin {
         System.out.println(URL);
         URL url = null;
         try {
+            //忽略验证
+            // 创建SSL上下文
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            // 创建一个TrustManager数组，并使用上述实现类初始化
+            TrustManager[] trustAllCerts = new TrustManager[]{new TrustAllCertificates()};
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+            // 设置默认的SSLSocketFactory和HostnameVerifier
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+
             url = new URL(URL);
             // System.out.println(URL);
             URLConnection connection = url.openConnection();
