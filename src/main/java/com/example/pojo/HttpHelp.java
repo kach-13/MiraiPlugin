@@ -56,7 +56,7 @@ public class HttpHelp {
     //访问
     public static String sendGet(String url) {
         String result = "";//返回的数据
-        BufferedReader in = null;
+        InputStream in = null;
         try {
             String urlNameString = "http://"+ url ;
             System.out.println(urlNameString);
@@ -77,10 +77,12 @@ public class HttpHelp {
 //                System.out.println(key + "--->" + map.get(key));
 //            }
             // 定义 BufferedReader输入流来读取URL的响应
-            in = new BufferedReader(new InputStreamReader(
-                    connection.getInputStream(),"UTF-8"));
+            in = connection.getInputStream();
+            InputStreamReader reader = new InputStreamReader(in, "UTF-8"); // 使用 UTF-8 解码
+            BufferedReader bufferedReader = new BufferedReader(reader);
+
             String line;
-            while ((line = in.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 result += line;
             }
         } catch (Exception e) {

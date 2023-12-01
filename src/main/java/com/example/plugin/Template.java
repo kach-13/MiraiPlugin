@@ -164,7 +164,7 @@ public class Template extends JavaPlugin {
                             .build();
                     g.getSubject().sendMessage(chain);//发送图片
                     externalResource.close();//结束关流
-                    file.delete();
+                    //file.delete();
                 }else if(str.startsWith("!删除图片")){
                    int index = str.lastIndexOf("片");
                     str = str.substring(index + 1);
@@ -554,7 +554,7 @@ public class Template extends JavaPlugin {
                         System.out.println("冷却");
                         //为空说明在冷却
                         //回复某个人的消息
-                        MessageChain chain = new MessageChainBuilder() // 引用收到的消息并回复 "Hi!", 也可以添加图片等更多元素.
+                        MessageChain chain = new MessageChainBuilder() // 引用收到的消息并回复, 也可以添加图片等更多元素.
                                 .append(new QuoteReply(g.getMessage()))
                                 .append("访问过快，等待几秒钟吧")
                                 .build();
