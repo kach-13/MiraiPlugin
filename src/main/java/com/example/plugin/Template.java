@@ -164,8 +164,6 @@ public class Template extends JavaPlugin {
                             .build();
                     g.getSubject().sendMessage(chain);//发送图片
                     externalResource.close();//结束关流
-                    //file.delete();
-
                 }else if(str.startsWith("!删除图片")){
                    int index = str.lastIndexOf("片");
                     str = str.substring(index + 1);
