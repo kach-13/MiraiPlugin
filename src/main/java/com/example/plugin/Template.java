@@ -456,8 +456,6 @@ public class Template extends JavaPlugin {
                         g.getSubject().sendMessage("没有查到数据呢，换个关键词试试吧");
                         return;
                     }
-
-
                     returns returns = JSONObject.parseObject(s, returns.class);
                     StringBuffer stringBuffer = new StringBuffer();
                     for(int i = 0 ; i<returns.getResult().getSongs().size() ; i++){
