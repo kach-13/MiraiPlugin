@@ -448,6 +448,7 @@ public class Template extends JavaPlugin {
                     int index = g.getMessage().get(1).toString().indexOf("歌");
                     String musicname = g.getMessage().get(1).toString().substring(index + 1);
                     musicname = URLEncoder.encode(musicname, "utf-8");
+                    //服务如果未打开会报错
                     String url = "localhost:9000/music/getmusic?name=" + musicname.trim();
                     //获取音乐集合
                     String s = HttpHelp.sendGet(url);
