@@ -406,6 +406,7 @@ public class Template extends JavaPlugin {
                     file.delete();
                     file1.delete();
                 }
+
 //                else if(g.getMessage().get(1).toString().equals("!随机色图")){
 //                    UUID uuid=UUID.randomUUID();
 //                    String uuids = uuid.toString();//生成随机名字
